@@ -1,0 +1,111 @@
+exercise_title,movement_pattern,primary_muscle,secondary_muscles,equipment,is_compound,is_bodyweight,needs_review
+Back Extension (Machine),pull,back,"biceps, rear delts",machine,True,False,False
+Back Extension (Weighted Hyperextension),pull,back,"biceps, rear delts",other,True,False,False
+Belt Squat (Machine),lower_body,legs,glutes,machine,True,False,False
+Bench Dip,push,chest,"triceps, shoulders",bodyweight,True,True,False
+Bench Press (Barbell),push,chest,"triceps, shoulders",barbell,True,False,False
+Bench Press (Dumbbell),push,chest,"triceps, shoulders",dumbbell,True,False,False
+Bent Over Row (Barbell),pull,back,"biceps, rear delts",barbell,True,False,False
+Bent Over Row (Dumbbell),pull,back,"biceps, rear delts",dumbbell,True,False,False
+Bicep Curl (Dumbbell),isolation_pull,biceps,,dumbbell,False,False,False
+Bicep Curl (Machine),isolation_pull,biceps,,machine,False,False,False
+Bulgarian Split Squat,lower_body,legs,glutes,other,True,False,False
+Cable Crunch,core,core,,cable,False,False,False
+Cable Fly Crossovers,push,chest,"triceps, shoulders",cable,False,False,False
+Chest Dip,push,chest,"triceps, shoulders",bodyweight,True,True,False
+Chest Dip (Assisted),push,chest,"triceps, shoulders",machine,True,False,False
+Chest Fly (Dumbbell),push,chest,"triceps, shoulders",dumbbell,False,False,False
+Chest Fly (Machine),push,chest,"triceps, shoulders",machine,False,False,False
+Concentration Curl,isolation_pull,biceps,,other,False,False,False
+Crunch,core,core,,other,False,True,False
+Crunch (Machine),core,core,,machine,False,False,False
+Dead Hang,unknown,unknown,,other,False,False,True
+Deadlift (Barbell),pull,back,"biceps, rear delts",barbell,True,False,False
+Decline Bench Press (Barbell),push,chest,"triceps, shoulders",barbell,True,False,False
+Decline Bench Press (Machine),push,chest,"triceps, shoulders",machine,True,False,False
+Decline Crunch (Weighted),core,core,,other,False,False,False
+deltoid,push,shoulders,triceps,other,False,False,False
+Dumbbell Row,pull,back,"biceps, rear delts",dumbbell,True,False,False
+elevated Smith  lunges,lower_body,legs,glutes,other,True,False,False
+Face Pull,pull,back,rear delts,other,False,False,False
+Front Raise (Cable),shoulder,shoulders,triceps,cable,False,False,False
+Hack Squat (Machine),lower_body,legs,glutes,machine,True,False,False
+Halfassed V Ups - Unilateral (Bodyweight),core,core,,bodyweight,False,True,False
+Hammer Curl (Cable),isolation_pull,biceps,,cable,False,False,False
+Hanging Knee Raise,core,core,,other,False,False,False
+Hanging Leg Raise,core,core,,other,False,False,False
+Heel Taps,core,core,,other,False,False,False
+Hip Abduction (Machine),core,core,,machine,False,False,False
+Hip Thrust (Barbell),lower_body,glutes,hamstrings,barbell,False,False,False
+Hip Thrust (Machine),lower_body,glutes,hamstrings,machine,False,False,False
+Incline Bench Press (Barbell),push,chest,"triceps, shoulders",barbell,True,False,False
+Incline Bench Press (Dumbbell),push,chest,"triceps, shoulders",dumbbell,True,False,False
+Incline Chest Fly (Dumbbell),push,chest,"triceps, shoulders",dumbbell,False,False,False
+Iso-Lateral Chest Press (Machine),unknown,unknown,,machine,False,False,True
+Iso-Lateral High Row (Machine),pull,back,"biceps, rear delts",machine,True,False,False
+Iso-Lateral Low Row,pull,back,"biceps, rear delts",other,True,False,False
+Iso-Lateral Row (Machine),pull,back,"biceps, rear delts",machine,True,False,False
+kneeling landmine press,push,shoulders,triceps,other,False,False,False
+Knee Raise Parallel Bars,core,core,,other,False,False,False
+Lateral Leg Raises,core,core,,other,False,False,False
+Lateral Raise (Dumbbell),shoulder,shoulders,triceps,dumbbell,False,False,False
+Lat Pulldown (Cable),pull,back,"biceps, rear delts",cable,True,False,False
+Lat Pulldown - Close Grip (Cable),pull,back,"biceps, rear delts",cable,True,False,False
+Lat Pulldown (Machine),pull,back,"biceps, rear delts",machine,True,False,False
+Leg Extension (Machine),lower_body,legs,glutes,machine,False,False,False
+Leg Press (Machine),lower_body,legs,glutes,machine,True,False,False
+Leg Raise Parallel Bars,core,core,,other,False,False,False
+Low Cable Fly Crossovers,push,chest,"triceps, shoulders",cable,False,False,False
+Lunge (Barbell),lower_body,legs,glutes,barbell,True,False,False
+Lying Leg Curl (Machine),lower_body,legs,glutes,machine,False,False,False
+Lying Leg Raise,core,core,,other,False,False,False
+Overhead Curl (Cable),isolation_pull,biceps,,cable,False,False,False
+Overhead Press (Barbell),push,shoulders,triceps,barbell,False,False,False
+Overhead Press (Smith Machine),push,shoulders,triceps,machine,False,False,False
+Overhead Triceps Extension (Cable),isolation_push,triceps,,cable,False,False,False
+Pendulum Squat (Machine),lower_body,legs,glutes,machine,True,False,False
+Plank,core,core,,other,False,False,False
+Preacher Curl (Dumbbell),isolation_pull,biceps,,dumbbell,False,False,False
+Preacher Curl (Machine),isolation_pull,biceps,,machine,False,False,False
+Pullover (Dumbbell),pull,back,rear delts,dumbbell,False,False,False
+Pull Up (Assisted),pull,back,"biceps, rear delts",machine,True,False,False
+Pull Up (Band),pull,back,"biceps, rear delts",other,True,False,False
+Push Up,push,chest,"triceps, shoulders",bodyweight,True,True,False
+Rack Pull,pull,back,"biceps, rear delts",other,True,False,False
+Rear Delt Reverse Fly (Cable),push,chest,"triceps, shoulders",cable,False,False,False
+Rear Delt Reverse Fly (Machine),push,chest,"triceps, shoulders",machine,False,False,False
+Reverse Grip Lat Pulldown (Cable),pull,back,"biceps, rear delts",cable,True,False,False
+Romanian Deadlift (Barbell),pull,back,"biceps, rear delts",barbell,True,False,False
+Rope Straight Arm Pulldown,pull,back,"biceps, rear delts",other,True,False,False
+Running,cardio,cardio,,other,False,False,False
+Russian Twist (Weighted),core,core,,other,False,False,False
+Seated Cable Row - Bar Wide Grip,pull,back,"biceps, rear delts",cable,True,False,False
+Seated Cable Row - V Grip (Cable),pull,back,"biceps, rear delts",cable,True,False,False
+Seated Dip Machine,push,chest,"triceps, shoulders",machine,True,False,False
+Shoulder Press (Dumbbell),shoulder,shoulders,triceps,dumbbell,True,False,False
+Single Arm Cable Row,pull,back,"biceps, rear delts",cable,True,False,False
+Single Arm Lat Pulldown,pull,back,"biceps, rear delts",other,True,False,False
+Single Arm Triceps Pushdown (Cable),isolation_push,triceps,,cable,False,False,False
+Single Leg Extensions,lower_body,legs,glutes,other,False,False,False
+Single Leg Romanian Deadlift (Dumbbell),pull,back,"biceps, rear delts",dumbbell,True,False,False
+Sit Up,core,core,,other,False,False,False
+Skullcrusher (Barbell),isolation_push,triceps,,barbell,False,False,False
+Skullcrusher (Dumbbell),isolation_push,triceps,,dumbbell,False,False,False
+Squat (Barbell),lower_body,legs,glutes,barbell,True,False,False
+Squat (Bodyweight),lower_body,legs,glutes,bodyweight,True,True,False
+Squat (Machine),lower_body,legs,glutes,machine,True,False,False
+standing abductors,core,core,,other,False,False,False
+Standing Cable Glute Kickbacks,lower_body,legs,glutes,cable,False,False,False
+standing hip thrust,lower_body,glutes,hamstrings,other,False,False,False
+Standing Leg Curls,lower_body,legs,glutes,other,False,False,False
+Stretching,mobility,mobility,,other,False,False,False
+Sumo Deadlift,pull,back,"biceps, rear delts",other,True,False,False
+Sumo Squat (Dumbbell),lower_body,legs,glutes,dumbbell,True,False,False
+T Bar Row,pull,back,"biceps, rear delts",other,True,False,False
+Torso Rotation,core,core,,other,False,False,False
+Treadmill,cardio,cardio,,other,False,False,False
+Triceps Kickback (Dumbbell),isolation_push,triceps,,dumbbell,False,False,False
+Triceps Pressdown,isolation_push,triceps,,other,False,False,False
+Triceps Rope Pushdown,isolation_push,triceps,,other,False,False,False
+Ucr Rowing Machine,pull,back,"biceps, rear delts",machine,True,False,False
+Upright Row (Cable),pull,back,"biceps, rear delts",cable,True,False,False
