@@ -23,6 +23,10 @@ Most fitness apps show isolated charts, summaries, or workout logs. This project
 
 Instead of treating the model as a calculator, `Hai` treats the model as an interpreter sitting on top of a structured analytics system.
 
+<p>
+  <img src="preview.png" alt="App Result" width="700" />
+</p>
+
 ## Current MVP Scope
 
 The current MVP supports:
