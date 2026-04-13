@@ -1,10 +1,12 @@
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
+from pathlib import Path
 
 DB_DSN = "postgresql://app:app@localhost:5432/health"
-CSV_PATH = "data/workout_data.csv"
+BASE_DIR = Path(__file__).resolve().parents[2]
 MAX_BIGINT = 9223372036854775807  # Postgres BIGINT max
+LOOKBACK_DAYS = 14
 
 def to_ts(x):
     if pd.isna(x) or x == "":
@@ -19,14 +21,56 @@ def py(x):
         return x.item()
     return x
 
-def main():
-    df = pd.read_csv(CSV_PATH)
+
+def to_utc_timestamp(value: object) -> pd.Timestamp:
+    ts = pd.Timestamp(value)
+    if ts.tzinfo is None:
+        return ts.tz_localize("UTC")
+    return ts.tz_convert("UTC")
+
+
+def resolve_csv_path() -> Path:
+    candidates = sorted(
+        (BASE_DIR / "data" / "raw").glob("workout_data*.csv"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    if not candidates:
+        raise FileNotFoundError("No Hevy CSV found matching data/raw/workout_data*.csv")
+    selected = candidates[0]
+    print(f"Using Hevy CSV: {selected}")
+    return selected
+
+def get_last_workout_start() -> pd.Timestamp | None:
+    with psycopg2.connect(DB_DSN) as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT MAX(start_time) FROM workouts;")
+            row = cur.fetchone()
+
+    if row is None or row[0] is None:
+        return None
+    return to_utc_timestamp(row[0])
+
+
+def main(full_refresh: bool = False):
+    df = pd.read_csv(resolve_csv_path())
     #1 Normalize column names
     df.columns = [c.strip() for c in df.columns]
 
     #2 Normalize timestamps 
     df["start_time"] = pd.to_datetime(df["start_time"], utc=True, errors="coerce")
     df["end_time"] = pd.to_datetime(df["end_time"], utc=True, errors="coerce")
+
+    if not full_refresh:
+        last_start = get_last_workout_start()
+        if last_start is not None:
+            cutoff = last_start - pd.Timedelta(days=LOOKBACK_DAYS)
+            df = df[df["start_time"] >= cutoff].copy()
+            print(f"Incremental import: keeping workouts from {cutoff.date()} onward")
+
+    if df.empty:
+        print("No new Hevy rows to ingest.")
+        return
 
     key_df = df[["title", "start_time", "end_time"]].astype(str)
     h = pd.util.hash_pandas_object(key_df, index=False).astype("uint64")
@@ -68,13 +112,13 @@ def main():
         ]
     ].dropna(subset=["workout_id", "exercise_title", "set_index"])
 
+    sets = sets.sort_values(["workout_id", "exercise_title", "set_index"]).drop_duplicates(
+        subset=["workout_id", "exercise_title", "set_index"], keep="last"
+    )
+
     # Convert pandas NA to Python None for psycopg2
     workouts_rows = [tuple(py(x) for x in row) for row in workouts.itertuples(index=False, name=None)]
     sets_rows = [tuple(py(x) for x in row) for row in sets.itertuples(index=False, name=None)]
-    dups = sets.duplicated(subset=["workout_id","exercise_title","set_index"], keep=False)
-    sets = sets.sort_values(["workout_id","exercise_title","set_index"]).drop_duplicates(
-    subset=["workout_id","exercise_title","set_index"], keep="last"
-)
 
     conn = psycopg2.connect(DB_DSN)
     conn.autocommit = False

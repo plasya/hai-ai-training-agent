@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hai</title>
+    <link rel="stylesheet" href="/static/app.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">AI Agent for Training Analytics</p>
+        <h1>Ask Hai about strength, fatigue, and recovery.</h1>
+        <p class="subcopy">
+          A lightweight chat UI on top of the local tool-using backend. Ask a question,
+          inspect confidence, and keep track of what you care about.
+        </p>
+      </section>
+
+      <section class="layout">
+        <aside class="panel preferences">
+          <div class="panel-head">
+            <h2>Preferences</h2>
+            <button id="refreshPrefs" type="button">Refresh</button>
+          </div>
+
+          <label>
+            <span>Tone</span>
+            <select id="tone">
+              <option value="standard">Standard</option>
+              <option value="motivating">Motivating</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Focus</span>
+            <select id="focusArea">
+              <option value="balanced">Balanced</option>
+              <option value="strength">Strength</option>
+              <option value="recovery">Recovery</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Summary Frequency</span>
+            <select id="summaryFrequency">
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Tracked Lifts</span>
+            <input id="trackedLifts" type="text" placeholder="Bench Press (Barbell), Squat (Barbell)" />
+          </label>
+
+          <label>
+            <span>Tracked Metrics</span>
+            <input id="trackedMetrics" type="text" placeholder="estimated_1rm, prs, trimp, fatigue_risk" />
+          </label>
+
+          <button id="savePrefs" class="primary" type="button">Save Preferences</button>
+          <p id="prefsStatus" class="muted"></p>
+        </aside>
+
+        <section class="panel workspace">
+          <div class="panel-head">
+            <div>
+              <h2>Workspace</h2>
+              <p class="muted">Use the live backend from focused views for comparison, planning, and recovery.</p>
+              <p id="sessionLabel" class="muted">Session: New Chat</p>
+            </div>
+            <div class="chat-controls">
+              <button id="newChatBtn" type="button">New Chat</button>
+              <label class="debug-toggle">
+                <input id="debugMode" type="checkbox" />
+                <span>Debug</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="tabs" role="tablist" aria-label="Hai views">
+            <button class="tab is-active" type="button" data-tab="compare">Compare</button>
+            <button class="tab" type="button" data-tab="planner">Planner</button>
+            <button class="tab" type="button" data-tab="recovery">Recovery</button>
+            <button class="tab" type="button" data-tab="data">Data</button>
+          </div>
+
+          <section class="tab-panel is-active" data-panel="compare">
+            <div class="tool-grid">
+              <label>
+                <span>Exercise</span>
+                <input id="compareExercise" type="text" value="Bench Press" placeholder="Bench Press" />
+              </label>
+              <label>
+                <span>Window</span>
+                <select id="compareWindow">
+                  <option value="last month">Last Month</option>
+                  <option value="past 3 months">Past 3 Months</option>
+                  <option value="december vs january">Named Months</option>
+                </select>
+              </label>
+              <label>
+                <span>Chart Metric</span>
+                <select id="compareMetric">
+                  <option value="volume">Volume</option>
+                  <option value="best_estimated_max">Best Estimated Max</option>
+                </select>
+              </label>
+              <label>
+                <span>Ask</span>
+                <button id="runCompare" class="primary tool-button" type="button">Compare Progress</button>
+              </label>
+            </div>
+
+            <div class="insight-grid">
+              <section class="surface">
+                <div class="surface-head">
+                  <h3>Window Comparison</h3>
+                  <p class="muted">Simple previous-window vs current-window comparison.</p>
+                </div>
+                <div id="compareChart" class="chart-placeholder">
+                  Window comparison chart will appear here.
+                </div>
+              </section>
+
+              <section class="surface">
+                <div class="surface-head">
+                  <h3>Answer Summary</h3>
+                  <span id="compareStatus" class="muted"></span>
+                </div>
+                <div id="compareResult" class="result-card">
+                  Ask Hai to compare a lift and the summary will appear here.
+                </div>
+                <div class="followup-block">
+                  <label>
+                    <span>Follow-Up</span>
+                    <input
+                      id="compareFollowup"
+                      type="text"
+                      placeholder="Why did volume drop? Compare with last 6 months instead..."
+                    />
+                  </label>
+                  <div class="composer-row">
+                    <button id="runCompareFollowup" class="primary" type="button">Ask Follow-Up</button>
+                    <span id="compareFollowupStatus" class="muted"></span>
+                  </div>
+                  <div id="compareFollowupResult" class="result-card compact">
+                    Follow-up answers will appear here.
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="planner">
+            <div class="surface">
+              <div class="surface-head">
+                <h3>Next Workout</h3>
+                <p class="muted">Get a simple next-session recommendation from recent strength exposure.</p>
+              </div>
+              <div class="composer-row planner-row">
+                <input id="plannerQuery" type="text" value="What should I train next?" />
+                <button id="runPlanner" class="primary" type="button">Plan Workout</button>
+              </div>
+              <div id="plannerResult" class="result-card">
+                Planner recommendation will appear here.
+              </div>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="recovery">
+            <div class="surface">
+              <div class="surface-head">
+                <h3>Recovery And Fatigue</h3>
+                <p class="muted">Check a short recovery or fatigue summary from the current backend tools.</p>
+              </div>
+              <div class="tool-grid">
+                <label>
+                  <span>Focus</span>
+                  <select id="recoveryMode">
+                    <option value="Was I more fatigued in the last 2 weeks?">Fatigue</option>
+                    <option value="How has my recovery looked this month?">Recovery</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Run</span>
+                  <button id="runRecovery" class="primary tool-button" type="button">Summarize Recovery</button>
+                </label>
+              </div>
+              <div id="recoveryResult" class="result-card">
+                Recovery summary will appear here.
+              </div>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="data">
+            <div class="insight-grid">
+              <section class="surface">
+                <div class="surface-head">
+                  <h3>Data Status</h3>
+                  <p class="muted">Read-only database coverage and freshness summary.</p>
+                </div>
+                <div class="placeholder-stack">
+                  <div class="placeholder-box">
+                    <strong>Total Workouts</strong>
+                    <div id="dataTotalWorkouts" class="muted">Loading...</div>
+                  </div>
+                  <div class="placeholder-box">
+                    <strong>Total Recovery Days</strong>
+                    <div id="dataRecoveryDays" class="muted">Loading...</div>
+                  </div>
+                  <div class="placeholder-box">
+                    <strong>Latest Feature Date</strong>
+                    <div id="dataLatestFeatureDate" class="muted">Loading...</div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="surface">
+                <div class="surface-head">
+                  <h3>Coverage</h3>
+                  <p class="muted">Current strength and recovery date ranges.</p>
+                </div>
+                <div class="placeholder-stack">
+                  <div class="placeholder-box">
+                    <strong>Strength Data Range</strong>
+                    <div id="dataStrengthRange" class="muted">Loading...</div>
+                  </div>
+                  <div class="placeholder-box">
+                    <strong>Recovery Data Range</strong>
+                    <div id="dataRecoveryRange" class="muted">Loading...</div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

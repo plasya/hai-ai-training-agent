@@ -1,0 +1,8 @@
+{
+  "tracked_lifts": ["Bench Press (Barbell)", "Squat (Barbell)"],
+  "tracked_metrics": ["estimated_1rm", "prs", "trimp", "fatigue_risk"],
+  "summary_frequency": "weekly",
+  "tone": "supportive",
+  "focus_area": "balanced",
+  "debug_default": false
+}

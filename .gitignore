@@ -6,6 +6,8 @@ __pycache__/
 *.pyc
 
 data/raw/
+data/user_preferences.json
+data/chat_sessions.json
 *.gpx
 *.xml
 *.cda
@@ -14,3 +16,8 @@ app/.ipynb_checkpoints/
 *.ipynb_checkpoints/
 
 --------A decision engine that.md
+*.ipynb
+
+docs/WMW
+docs/notes.md
+docs/architecture.md

@@ -2,22 +2,56 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
+from pathlib import Path
 
 DB_DSN = "postgresql://app:app@localhost:5432/health"
-XML_PATH = "../../data/raw/apple_health_export/export.xml"
+BASE_DIR = Path(__file__).resolve().parents[2]
+LOOKBACK_DAYS = 14
 
 
 def parse_dt(x):
     return pd.to_datetime(x, utc=True, errors="coerce")
 
 
-def extract_recovery_data():
-    tree = ET.parse(XML_PATH)
+def resolve_xml_path() -> Path:
+    candidates = [
+        BASE_DIR / "data" / "raw" / "export_2_unzipped" / "apple_health_export" / "export.xml",
+        BASE_DIR / "data" / "raw" / "apple_health_export" / "export.xml",
+        Path.home() / "Downloads" / "apple_health_export" / "export.xml",
+    ]
+    existing = [p for p in candidates if p.exists()]
+    if not existing:
+        raise FileNotFoundError("No Apple export.xml found in data/raw/apple_health_export or Downloads/apple_health_export")
+    selected = max(existing, key=lambda p: p.stat().st_mtime)
+    print(f"Using Apple recovery export: {selected}")
+    return selected
+
+
+def get_last_recovery_date() -> pd.Timestamp | None:
+    with psycopg2.connect(DB_DSN) as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT MAX(date) FROM apple_daily_recovery;")
+            row = cur.fetchone()
+
+    if row is None or row[0] is None:
+        return None
+    return pd.Timestamp(row[0])
+
+
+def extract_recovery_data(full_refresh: bool = False):
+    tree = ET.parse(resolve_xml_path())
     root = tree.getroot()
 
     resting_rows = []
     hrv_rows = []
     sleep_rows = []
+    cutoff_date = None
+
+    if not full_refresh:
+        last_date = get_last_recovery_date()
+        if last_date is not None:
+            cutoff_date = (last_date - pd.Timedelta(days=LOOKBACK_DAYS)).date()
+            print(f"Incremental recovery import: keeping records from {cutoff_date} onward")
 
     for record in root.findall("Record"):
         rtype = record.attrib.get("type")
@@ -28,11 +62,15 @@ def extract_recovery_data():
         if pd.isna(start):
             continue
 
+        record_date = start.date()
+        if cutoff_date is not None and record_date < cutoff_date:
+            continue
+
         # Resting heart rate
         if rtype == "HKQuantityTypeIdentifierRestingHeartRate":
             try:
                 resting_rows.append({
-                    "date": start.date(),
+                    "date": record_date,
                     "resting_hr": float(value)
                 })
             except (TypeError, ValueError):
@@ -42,7 +80,7 @@ def extract_recovery_data():
         elif rtype == "HKQuantityTypeIdentifierHeartRateVariabilitySDNN":
             try:
                 hrv_rows.append({
-                    "date": start.date(),
+                    "date": record_date,
                     "hrv_sdnn": float(value)
                 })
             except (TypeError, ValueError):
@@ -65,7 +103,7 @@ def extract_recovery_data():
                 minutes = (end - start).total_seconds() / 60.0
                 if minutes > 0:
                     sleep_rows.append({
-                        "date": start.date(),
+                        "date": record_date,
                         "sleep_minutes": minutes
                     })
 
