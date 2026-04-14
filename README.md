@@ -1,344 +1,204 @@
 # Hai: AI Agent for Training Analytics
 
-`Hai` is an AI-powered training analytics system that turns workout and recovery data into structured insights about strength progress, fatigue, and recovery trends.
+Hai is a local-first AI training analytics assistant that answers questions about strength progress, fatigue, recovery trends, and next-session planning using structured workout telemetry.
 
-This project combines:
+Instead of querying raw fitness tables directly, Hai routes user questions through domain-specific analytics tools and generates explanations grounded in engineered training features.
 
-- data ingestion from workout and health sources
-- feature engineering and rollups in Python + PostgreSQL
-- structured analytics tools for querying training signals
-- a constrained AI agent layer that routes user questions to predefined tools
-- an API layer that returns debug-friendly or frontend-friendly responses
+---
 
-The long-term goal is to build a production-quality AI coaching assistant that explains patterns in training data without relying on raw-table reasoning or hallucinated metrics.
+## Demo Screens
 
-## Why This Project Exists
+### Strength Trend Comparison (Bench Press)
 
-Most fitness apps show isolated charts, summaries, or workout logs. This project is built around a different idea:
+Compare estimated strength, volume, and PR changes across time windows.
 
-- ingest raw personal fitness and recovery data
-- compute durable analytics features in a backend pipeline
-- expose safe, predefined analysis tools
-- let an LLM explain those structured results clearly and cautiously
+![Bench Comparison](assets/screenshots/compare_bench.png)
 
-Instead of treating the model as a calculator, `Hai` treats the model as an interpreter sitting on top of a structured analytics system.
+### Strength Trend Comparison (Squat)
 
-<p>
-  <img src="preview.png" alt="App Result" width="700" />
-</p>
+Exercise-specific comparison across recent training windows.
 
-## Current MVP Scope
+![Squat Comparison](assets/screenshots/compare_squat.png)
 
-The current MVP supports:
+### Next Workout Planner
 
-- Hevy workout ingestion into Postgres
-- Apple Health daily recovery extraction
-- derived feature tables for training load, recovery, and strength progress
-- a tool registry for analytics queries
-- a lightweight agent orchestrator that selects tools from user intent
-- a local HTTP API endpoint for agent queries
-- data quality flags and confidence handling for incomplete recovery data
+Suggests the next training focus using recent muscle exposure.
 
-## Architecture
+![Planner](assets/screenshots/planner.png)
 
-The system is organized into four practical layers:
+### Recovery & Fatigue Summary
 
-1. Raw / Ingestion Layer
-- Hevy workout export
-- Apple Health export
-- raw-to-Postgres ingestion scripts
+Summarizes recovery signals from HRV, resting HR, and sleep-derived features.
 
-2. Feature Engineering Layer
-- daily training and recovery features
-- exercise-level strength progression
-- weekly muscle-group and training summaries
+![Recovery](assets/screenshots/recovery.png)
 
-3. Analytics / Tool Layer
-- predefined functions for strength comparison, fatigue snapshots, recovery trends, and weekly summaries
-- structured JSON outputs with quality flags and confidence annotations
+### Data Coverage Dashboard
 
-4. Agent / API Layer
-- user prompt -> tool selection -> tool execution -> structured prompt -> optional LLM answer
-- clean API response by default, debug details only when requested
+Shows database coverage and feature availability across strength and recovery signals.
 
-## Repository Structure
+![Data Status](assets/screenshots/data_status.png)
 
-```text
-hai/
-├── app/
-│   ├── analytics/      # SQL/Pandas analytics helpers and strength queries
-│   ├── api/            # lightweight HTTP API server
-│   ├── features/       # derived training/recovery feature builders
-│   ├── ingestion/      # raw data ingestion scripts
-│   ├── llm/            # tool registry, agent orchestrator, prompt builder, LLM client
-│   └── pipeline/       # feature build orchestration
-├── data/
-│   ├── exercise_reference*.csv
-│   └── raw/            # local-only personal health/workout data (ignored from Git)
-├── docs/               # architecture notes, prompt specs, tool contracts, evaluation docs
-├── tests/              # smoke scripts and prompt examples
-├── docker-compose.yml  # local Postgres
-└── requirements.txt
-```
+---
 
-## Data Model
+## What This Project Demonstrates
 
-### Raw / Canonical Tables
+This project implements a constrained tool-using LLM agent architecture:
 
-- `workouts`
-- `sets`
-- `apple_workouts`
-- `heart_rate_raw`
-- `apple_daily_recovery`
+user question  
+→ tool selection  
+→ feature-table analytics execution  
+→ structured payload  
+→ confidence-aware explanation layer
 
-### Derived Feature Tables
+Instead of letting an LLM infer from raw tables, Hai interprets outputs from engineered analytics features.
 
-- `daily_features`
-  - daily TRIMP / load
-  - resting HR / HRV / sleep
-  - baseline deltas
-  - ACWR / fatigue proxy
+Core capabilities:
 
-- `exercise_progress`
-  - exercise-level volume
-  - top weight
-  - estimated 1RM
-  - PR detection
+- strength progress comparison across time windows
+- next-session workout recommendation engine
+- fatigue and recovery summaries
+- confidence-aware outputs with quality flags
+- structured feature-table reasoning instead of raw-data prompting
+- browser-based task-focused UI for comparison, planning, recovery, and data coverage
 
-- `weekly_muscle_features`
-  - weekly muscle-group volume and PRs
+---
 
-- `weekly_training_features`
-  - weekly strength volume, TRIMP, ACWR, fatigue days, readiness
+## Architecture Overview
 
-## AI Agent Design
+Hai is organized into four layers:
 
-This project uses a constrained, tool-using AI agent pattern.
+### 1. Ingestion Layer
 
-The agent does not read raw tables directly. Instead it:
+Imports:
 
-1. receives a user question
-2. selects from allowlisted analytics tools
-3. executes those tools against structured feature tables
-4. assembles a prompt from tool outputs
-5. optionally calls an LLM for a natural-language answer
+- Hevy workout exports
+- Apple Health recovery signals
 
-Current allowlisted tools include:
+into PostgreSQL canonical tables.
 
-- `compare_strength_windows`
-- `get_weekly_training_summary`
-- `get_fatigue_snapshot`
-- `get_recovery_trend`
+### 2. Feature Engineering Layer
+
+Builds derived analytics features:
+
+- daily training load
+- HRV / resting HR recovery signals
+- estimated 1RM progression
+- weekly muscle exposure summaries
+- fatigue proxies and readiness metrics
+
+### 3. Analytics Tool Layer
+
+Provides structured analysis functions:
+
+- strength window comparisons
+- weekly summaries
+- recovery trends
+- fatigue snapshots
+- exposure-balanced workout planning
 
 Each tool returns:
 
 - `payload`
-- `data_quality`
 - `quality_flags`
 - `confidence`
 
-This makes the system more reliable than letting a model infer directly from raw data.
+instead of raw database rows.
+
+### 4. Agent Orchestration Layer
+
+Routes queries to allowlisted analytics tools before generating responses:
+
+question → tool routing → analytics execution → structured prompt → explanation
+
+This prevents hallucinated metrics and improves interpretability.
+
+---
+
+## Example Questions Supported
+
+Hai currently answers questions like:
+
+- How did my bench press progress over the last 3 months?
+- Was my training volume higher this month than last month?
+- What should I train next?
+- Was I more fatigued recently?
+- How has my recovery changed this quarter?
+
+---
 
 ## API
 
-The local API currently exposes:
+Main agent endpoint:
 
-- `GET /health`
-- `POST /agent/query`
+`POST /agent/query`
 
-### Example request
+Example:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/agent/query \
   -H "Content-Type: application/json" \
   -d '{
-    "user_query": "Was I more fatigued in the last 2 weeks?",
-    "tool_params": {
-      "get_fatigue_snapshot": {
-        "date_start": "2026-01-01",
-        "date_end": "2026-01-31"
-      },
-      "get_recovery_trend": {
-        "date_start": "2026-01-01",
-        "date_end": "2026-01-31"
-      }
-    },
-    "call_llm": false,
-    "debug": false
+    "user_query": "How did my squat change over the past 3 months?",
+    "call_llm": true
   }'
 ```
 
-### Example response
+## Repository Structure
 
-```json
-{
-  "answer": null,
-  "confidence": "low",
-  "selected_tools": [
-    "get_fatigue_snapshot",
-    "get_recovery_trend"
-  ],
-  "quality_flags": [
-    "low_hrv_coverage",
-    "low_resting_hr_coverage",
-    "missing_sleep"
-  ],
-  "message": "LLM answer not generated. Send `call_llm: true` to return a final natural-language answer."
-}
-```
+hai/
+├── app/
+│ ├── analytics/
+│ ├── api/
+│ ├── features/
+│ ├── ingestion/
+│ ├── llm/
+│ ├── pipeline/
+│ ├── preferences/
+│ └── chat/
+├── assets/
+│ └── screenshots/
+├── data/
+├── docs/
+├── tests/
+├── docker-compose.yml
+└── requirements.txt
 
-Set `debug: true` to include raw tool outputs and the generated prompt for inspection.
+## Tech Stack
 
-## Supported Questions
-
-The current MVP is designed to answer a focused set of question types well:
-
-- strength progress questions
-- weekly training summary questions
-- fatigue and recovery summary questions
-- metric explanation questions
-
-Examples:
-
-- `How did my bench press progress over the last month?`
-- `How was my training last week?`
-- `Was I more fatigued in the last 2 weeks?`
-- `What does HRV SDNN mean here?`
-
-Questions outside these supported categories may require new tools or additional feature work.
-
-## Local Setup
-
-### 1. Create and activate the virtual environment
-
-```bash
-cd /Users/lasya/hai
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-### 2. Start Postgres
-
-```bash
-docker compose up -d
-```
-
-This starts a local Postgres instance using the credentials in `docker-compose.yml`:
-
-- user: `app`
-- password: `app`
-- database: `health`
-
-### 3. Prepare local data
-
-This repo expects personal source files locally, but they are intentionally excluded from version control:
-
-- `data/raw/workout_data.csv`
-- `data/raw/apple_health_export/export.xml`
-
-### 4. Run ingestion / feature pipelines
-
-```bash
-python app/ingestion/ingest_hevy.py
-python app/ingestion/apple_daily_recovery.py
-python app/pipeline/build_all_features.py
-```
-
-### 5. Start the API
-
-```bash
-python -m app.api.server
-```
-
-### 6. Smoke test the agent path
-
-```bash
-python tests/agent_orchestrator_smoke.py
-```
-
-## Docs
-
-Project thinking and WIP specs live in `docs/`, including:
-
-- prompt design
-- tool contracts
-- evaluation tracking
-- architecture notes
-- physiology context for recovery / fatigue interpretation
-
-Useful files:
-
-- [`docs/assistant_capabilities.md`](docs/assistant_capabilities.md)
-- [`docs/metrics_catalog.md`](docs/metrics_catalog.md)
-- [`docs/prompt_examples.md`](docs/prompt_examples.md)
-- [`docs/gpt_prompt.txt`](docs/gpt_prompt.txt)
-- [`docs/llm_tools.md`](docs/llm_tools.md)
-- [`docs/metrics_log.md`](docs/metrics_log.md)
-- [`docs/architecture.md`](docs/architecture.md)
+- Python
+- PostgreSQL
+- Pandas
+- SQL feature engineering pipelines
+- LLM tool routing
+- Agent orchestration
+- REST API backend
+- lightweight UI
 
 ## What Makes This Different
 
-This is not a generic chatbot wrapper around fitness data.
+Hai is not a chatbot wrapper around fitness data.
 
-It is an applied AI systems project focused on:
+It is an applied AI analytics system designed around:
 
-- analytics-backed reasoning
-- agentic tool orchestration
+- feature-table reasoning instead of raw prompting
+- constrained tool selection
 - confidence-aware outputs
-- health-related caution and uncertainty handling
-- a production-friendly backend design
+- explainable strength and recovery metrics
+- local-first health telemetry processing
 
-That makes it closer to an AI product / applied AI engineering project than a prompt-only demo.
+## Future Work
 
-## Current Limitations
+- regression evaluation tracking
+- richer trend visualizations
+- MCP-compatible tool interface
+- notification workflows
+- extended recovery modeling
 
-- raw Apple workout ingestion is still partially notebook-driven
-- some planned modules are still placeholders or WIP
-- the current API server is intentionally lightweight for MVP
-- model invocation is optional and not enabled by default
-- data quality can be sparse depending on recovery signal coverage
+## Privacy
 
-## Roadmap
+All personal health exports remain local.
 
-- enable full LLM answer generation by default
-- improve prompt templates and answer formatting
-- expand analytics tool coverage
-- add evaluation runs and regression tracking
-- add notification workflows for summaries and alerts
-- optionally expose the tool layer through a more standard agent/MCP interface
-- add a lightweight frontend chat experience
+The following are excluded from version control:
 
-## Privacy and Data Handling
-
-This repository is designed so that personal health exports and raw workout data can stay local.
-
-Recommended practice:
-
-- keep `data/raw/` out of Git
-- keep `.env` out of Git
-- avoid publishing personal exports, XML dumps, or large raw files
-- publish only code, schemas, examples, and small safe reference data
-
-## Portfolio Positioning
-
-This project can be positioned as:
-
-`AI agent for training analytics built with Python, PostgreSQL, structured tool orchestration, and LLM-based explanation layers.`
-
-Keywords relevant to this project:
-
-- AI agent
-- applied AI
-- LLM orchestration
-- analytics backend
-- data pipelines
-- feature engineering
-- PostgreSQL
-- tool calling
-- prompt engineering
-- reliability / evaluation
-
-## Status
-
-Active work in progress. The current repository reflects an MVP backend and evolving agent architecture.
+- data/raw/
+- .env
